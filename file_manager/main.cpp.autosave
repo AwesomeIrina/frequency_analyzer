@@ -1,11 +1,5 @@
 #include <QCoreApplication>
-#include <iostream>
-#include <QFile>
-#include <QFileInfo>
-#include <QString>
-#include <QTextStream>
-#include <fstream>
-#include <windows.h>
+
 
 int main(int argc, char *argv[])
 {
