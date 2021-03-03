@@ -13,14 +13,16 @@ void symbol_analyzer::frequency(QString command)
     QTextStream out(stdout);
     std::map<QString, int> copy;
     copy = symbNum;
+    int counter = 0;
+    int tmp;
+
     if(command == "popular"){
-        int counter = 0;
-        int tmp = 0;
+        tmp = 0;
         QString popular[5];
-        std::cout<<"Five the most popular symbols in the text"<<std::endl;
+        std::cout<<"Five the most popular symbols in the text:"<<std::endl;
         while(counter!=5){
             for(auto it = copy.begin(); it != copy.end(); it++){
-                if(it->second > tmp){
+                if(it->second >= tmp){
                     tmp = it->second;
                     popular[counter] = it->first;
                 }
@@ -30,6 +32,25 @@ void symbol_analyzer::frequency(QString command)
             tmp = 0;
             counter += 1;
         }
+    }
+
+    if(command == "unpopular"){
+        QString unpopular[3];
+        tmp = symbNum.size();
+        std::cout<<"Three unpopular symbols in the text:"<<std::endl;
+        while(counter!=3){
+            for(auto it = copy.begin(); it != copy.end(); it++){
+                if(it->second <= tmp){
+                    tmp = it->second;
+                    unpopular[counter] = it->first;
+                }
+            }
+            out<<unpopular[counter]<<"-->"<<copy[unpopular[counter]]<<endl;
+            copy[unpopular[counter]] = 1000;
+            tmp = symbNum.size();
+            counter += 1;
+        }
+        std::cout<<"End"<<std::endl;
     }
 }
 
@@ -82,7 +103,7 @@ void symbol_analyzer::console()
     QTextStream cout(stdout), cin(stdin);
     command = cin.readLine().trimmed().toLower();
     textRead(command);
-    frequency("popular");
+    frequency("unpopular");
     //changesCheck();
 //    while(true){
 //                std::cout << "Input the command: " << std::endl;
