@@ -7,22 +7,35 @@ symbol_analyzer::symbol_analyzer()
 
 void symbol_analyzer::textRead(QString pathToFile)
 {
+   //pathToFile = "D:\QtProjects\file_manager\Test_1\123.txt";
    QTextStream out(stdout);
    QFile file(pathToFile);
-   // Создаем входящий поток, из которого будут считываться данные, и связываем его с нашим файлом
    QTextStream in(&file);
-   // С помощью метода open() открываем файл в режиме чтения
    if (!file.open(QIODevice::ReadOnly)) {
-     qWarning("Cannot open file for reading"); // если файл не найден, то выводим предупреждение и завершаем выполнение программы
+     qWarning("Cannot open file for reading");
    }
-   // Считываем файл строка за строкой
-   while (!in.atEnd()) { // метод atEnd() возвращает true, если в потоке больше нет данных для чтения
-     QString line = in.readLine(); // метод readLine() считывает одну строку из потока
-     out << line << endl;
+   QString text;
+   //считываем весь текст из файла построчно
+   while (!in.atEnd()) {
+     text += in.readLine().trimmed().toLower() + " ";
+   }
+   file.close();
+   //занесли все символы в мапу
+   for(int i = 0; i<text.size(); i++){
+       frequency.insert(std::pair<QString, int>(text[i], 0));
+   }
+   //теперь идём по строке и считаем количество символов
+   for(int i = 0; i<text.size(); i++){
+       for(auto it = frequency.begin(); it!=frequency.end();it++){
+           if(text[i] == it->first){
+               it->second+=1;
+           }
+       }
+   }
+   for(auto it = frequency.begin(); it!=frequency.end();it++){
+       out << it->first <<" "<<it->second << endl;
    }
 
-   // Закрываем файл
-   file.close();
 }
 
 void symbol_analyzer::helpCout(){

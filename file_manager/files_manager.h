@@ -10,6 +10,7 @@
 #include <QVector>
 #include <windows.h>
 
+
 class symbol_analyzer
 {
 public:
@@ -21,7 +22,7 @@ public:
     void helpCout();
     void check(const QString& condition, const QString& path);
 private:
-    std::map<char, int> frequency;
+    std::map<QString, int> frequency;
     QVector<QString> filesNames;
 };
 
