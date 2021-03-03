@@ -10,14 +10,15 @@
 #include <QVector>
 #include <windows.h>
 
-class files_manager
+class symbol_analyzer
 {
 public:
-    files_manager();
+    symbol_analyzer();
     void textRead(QString pathToFile);
     void commandAnalize(QString&);
     void console();
     void changesCheck();
+    void helpCout();
     void check(const QString& condition, const QString& path);
 private:
     std::map<char, int> frequency;
