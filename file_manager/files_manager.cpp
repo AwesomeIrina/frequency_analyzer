@@ -1,8 +1,36 @@
 #include "files_manager.h"
+#include <vector>
+
+
 
 symbol_analyzer::symbol_analyzer()
 {
     console();
+}
+
+void symbol_analyzer::frequency(QString command)
+{
+    QTextStream out(stdout);
+    std::map<QString, int> copy;
+    copy = symbNum;
+    if(command == "popular"){
+        int counter = 0;
+        int tmp = 0;
+        QString popular[5];
+        std::cout<<"Five the most popular symbols in the text"<<std::endl;
+        while(counter!=5){
+            for(auto it = copy.begin(); it != copy.end(); it++){
+                if(it->second > tmp){
+                    tmp = it->second;
+                    popular[counter] = it->first;
+                }
+            }
+            out<<popular[counter]<<"-->"<<copy[popular[counter]]<<endl;
+            copy[popular[counter]] = -1;
+            tmp = 0;
+            counter += 1;
+        }
+    }
 }
 
 void symbol_analyzer::textRead(QString pathToFile)
@@ -23,28 +51,27 @@ void symbol_analyzer::textRead(QString pathToFile)
    file.close();
    //занесли все символы в мапу
    for(int i = 0; i<text.size(); i++){
-       frequency.insert(std::pair<QString, int>(text[i], 0));
+       symbNum.insert(std::pair<QString, int>(text[i], 0));
    }
    //теперь идём по строке и считаем количество символов
    for(int i = 0; i<text.size(); i++){
-       for(auto it = frequency.begin(); it!=frequency.end();it++){
+       for(auto it = symbNum.begin(); it!=symbNum.end();it++){
            if(text[i] == it->first){
                it->second+=1;
            }
        }
    }
-   for(auto it = frequency.begin(); it!=frequency.end();it++){
-       out << it->first <<" "<<it->second << endl;
+   std::cout<<"All symbols:"<<std::endl;
+   for(auto it = symbNum.begin(); it != symbNum.end(); it++){
+       out<<it->first+"->"<<it->second<<endl;
    }
-
 }
 
 void symbol_analyzer::helpCout(){
     std::cout << "add /path/ - to add file for checking" << std::endl;
-    std::cout << "pop - to see five the most popular symbols" << std::endl;
-    std::cout << "unpop - to see three unpopulat symbols" << std::endl;
+    std::cout << "popular - to see five the most popular symbols" << std::endl;
+    std::cout << "unpopular - to see three unpopulat symbols" << std::endl;
     std::cout << "probab /symbol/ - to see five the probability of your symbol" << std::endl;
-
 }
 
 void symbol_analyzer::console()
@@ -55,13 +82,12 @@ void symbol_analyzer::console()
     QTextStream cout(stdout), cin(stdin);
     command = cin.readLine().trimmed().toLower();
     textRead(command);
-    command1 = cin.readLine().trimmed().toLower();
-    textRead(command1);
+    frequency("popular");
     //changesCheck();
 //    while(true){
 //                std::cout << "Input the command: " << std::endl;
 //        command = cin.readLine().trimmed().toLower();
-//        if(command!="help" && command!="add" && command != "pop" && command != "unpop" && command != "probab"){
+//        if(command!="help" && command!="add" && command != "popular" && command != "unpopular" && command != "probab"){
 //            std::cout << "Incorrect command! Input 'help' to see the list of commands" << std::endl;
 
 //        }

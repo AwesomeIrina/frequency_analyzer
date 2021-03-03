@@ -16,13 +16,11 @@ class symbol_analyzer
 public:
     symbol_analyzer();
     void textRead(QString pathToFile);
-    void commandAnalize(QString&);
     void console();
-    void changesCheck();
     void helpCout();
-    void check(const QString& condition, const QString& path);
+    void frequency(QString command);
 private:
-    std::map<QString, int> frequency;
+    std::map<QString, int> symbNum;
     QVector<QString> filesNames;
 };
 
