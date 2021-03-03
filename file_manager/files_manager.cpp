@@ -2,7 +2,7 @@
 
 symbol_analyzer::symbol_analyzer()
 {
-
+    console();
 }
 
 void symbol_analyzer::textRead(QString pathToFile)
@@ -11,6 +11,7 @@ void symbol_analyzer::textRead(QString pathToFile)
    QTextStream out(stdout);
    QFile file(pathToFile);
    QTextStream in(&file);
+   in.setCodec("UTF-8");
    if (!file.open(QIODevice::ReadOnly)) {
      qWarning("Cannot open file for reading");
    }
@@ -50,10 +51,12 @@ void symbol_analyzer::console()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    QString command;
+    QString command, command1;
     QTextStream cout(stdout), cin(stdin);
     command = cin.readLine().trimmed().toLower();
     textRead(command);
+    command1 = cin.readLine().trimmed().toLower();
+    textRead(command1);
     //changesCheck();
 //    while(true){
 //                std::cout << "Input the command: " << std::endl;

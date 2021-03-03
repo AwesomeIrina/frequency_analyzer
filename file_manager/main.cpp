@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     symbol_analyzer obj;
-    obj.console();
+    //obj.console();
 
 
     return a.exec();
