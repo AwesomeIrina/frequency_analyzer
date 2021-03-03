@@ -8,6 +8,18 @@ symbol_analyzer::symbol_analyzer()
     console();
 }
 
+void symbol_analyzer::probability(QString symbol)
+{
+    QTextStream out(stdout);
+    int counter = 0;
+    for(auto it = symbNum.begin(); it != symbNum.end(); it++){
+        counter+=it->second;
+    }
+    out<<symbNum[symbol]<<endl;
+    double probab = double(symbNum[symbol])/double(counter);
+    std::cout<<probab<<std::endl;
+}
+
 void symbol_analyzer::frequency(QString command)
 {
     QTextStream out(stdout);
@@ -50,7 +62,6 @@ void symbol_analyzer::frequency(QString command)
             tmp = symbNum.size();
             counter += 1;
         }
-        std::cout<<"End"<<std::endl;
     }
 }
 
@@ -103,7 +114,8 @@ void symbol_analyzer::console()
     QTextStream cout(stdout), cin(stdin);
     command = cin.readLine().trimmed().toLower();
     textRead(command);
-    frequency("unpopular");
+    probability("ъ");
+    //frequency("unpopular");
     //changesCheck();
 //    while(true){
 //                std::cout << "Input the command: " << std::endl;

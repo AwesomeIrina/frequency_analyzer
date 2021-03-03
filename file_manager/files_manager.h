@@ -19,6 +19,7 @@ public:
     void console();
     void helpCout();
     void frequency(QString command);
+    void probability(QString symbol);
 private:
     std::map<QString, int> symbNum;
     QVector<QString> filesNames;
