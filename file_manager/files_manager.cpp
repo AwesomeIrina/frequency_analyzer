@@ -8,66 +8,77 @@ symbol_analyzer::symbol_analyzer()
     console();
 }
 
-void symbol_analyzer::probability(QString symbol)
+void symbol_analyzer::probability()
 {
-    QTextStream out(stdout);
-    int counter = 0;
-    for(auto it = symbNum.begin(); it != symbNum.end(); it++){
-        counter+=it->second;
+    if(symbNum.empty()){
+        std::cout<<"First you need to add some text"<<std::endl;
+    }else{
+        QTextStream out(stdout), cin(stdin);
+        std::cout<<"Input the symbol: "<<std::endl;
+        QString symbol;
+        symbol = cin.readLine().trimmed().toLower();
+        int counter = 0;
+        for(auto it = symbNum.begin(); it != symbNum.end(); it++){
+            counter+=it->second;
+        }
+        out<<symbNum[symbol]<<endl;
+        double probab = double(symbNum[symbol])/double(counter);
+        std::cout<<double(probab)<<std::endl;
     }
-    out<<symbNum[symbol]<<endl;
-    double probab = double(symbNum[symbol])/double(counter);
-    std::cout<<probab<<std::endl;
 }
 
 void symbol_analyzer::frequency(QString command)
 {
-    QTextStream out(stdout);
-    std::map<QString, int> copy;
-    copy = symbNum;
-    int counter = 0;
-    int tmp;
+    if(symbNum.empty()){
+        std::cout<<"First you need to add some text"<<std::endl;
+    }else{
+        QTextStream out(stdout);
+        std::map<QString, int> copy;
+        copy = symbNum;
+        int counter = 0;
+        int tmp;
 
-    if(command == "popular"){
-        tmp = 0;
-        QString popular[5];
-        std::cout<<"Five the most popular symbols in the text:"<<std::endl;
-        while(counter!=5){
-            for(auto it = copy.begin(); it != copy.end(); it++){
-                if(it->second >= tmp){
-                    tmp = it->second;
-                    popular[counter] = it->first;
-                }
-            }
-            out<<popular[counter]<<"-->"<<copy[popular[counter]]<<endl;
-            copy[popular[counter]] = -1;
+        if(command == "popular"){
             tmp = 0;
-            counter += 1;
+            QString popular[5];
+            std::cout<<"Five the most popular symbols in the text:"<<std::endl;
+            while(counter!=5){
+                for(auto it = copy.begin(); it != copy.end(); it++){
+                    if(it->second >= tmp){
+                        tmp = it->second;
+                        popular[counter] = it->first;
+                    }
+                }
+                out<<popular[counter]<<"-->"<<copy[popular[counter]]<<endl;
+                copy[popular[counter]] = -1;
+                tmp = 0;
+                counter += 1;
+            }
+        }
+
+        if(command == "unpopular"){
+            QString unpopular[3];
+            tmp = symbNum.size();
+            std::cout<<"Three unpopular symbols in the text:"<<std::endl;
+            while(counter!=3){
+                for(auto it = copy.begin(); it != copy.end(); it++){
+                    if(it->second <= tmp){
+                        tmp = it->second;
+                        unpopular[counter] = it->first;
+                    }
+                }
+                out<<unpopular[counter]<<"-->"<<copy[unpopular[counter]]<<endl;
+                copy[unpopular[counter]] = 1000;
+                tmp = symbNum.size();
+                counter += 1;
+            }
         }
     }
 
-    if(command == "unpopular"){
-        QString unpopular[3];
-        tmp = symbNum.size();
-        std::cout<<"Three unpopular symbols in the text:"<<std::endl;
-        while(counter!=3){
-            for(auto it = copy.begin(); it != copy.end(); it++){
-                if(it->second <= tmp){
-                    tmp = it->second;
-                    unpopular[counter] = it->first;
-                }
-            }
-            out<<unpopular[counter]<<"-->"<<copy[unpopular[counter]]<<endl;
-            copy[unpopular[counter]] = 1000;
-            tmp = symbNum.size();
-            counter += 1;
-        }
-    }
 }
 
 void symbol_analyzer::textRead(QString pathToFile)
 {
-   //pathToFile = "D:\QtProjects\file_manager\Test_1\123.txt";
    QTextStream out(stdout);
    QFile file(pathToFile);
    QTextStream in(&file);
@@ -100,43 +111,49 @@ void symbol_analyzer::textRead(QString pathToFile)
 }
 
 void symbol_analyzer::helpCout(){
-    std::cout << "add /path/ - to add file for checking" << std::endl;
+    std::cout << "add - to add file for checking" << std::endl;
     std::cout << "popular - to see five the most popular symbols" << std::endl;
     std::cout << "unpopular - to see three unpopulat symbols" << std::endl;
-    std::cout << "probab /symbol/ - to see five the probability of your symbol" << std::endl;
+    std::cout << "probab - to see five the probability of your symbol" << std::endl;
 }
 
 void symbol_analyzer::console()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    QString command, command1;
+    QString command;
     QTextStream cout(stdout), cin(stdin);
-    command = cin.readLine().trimmed().toLower();
-    textRead(command);
-    probability("ъ");
-    //frequency("unpopular");
-    //changesCheck();
-//    while(true){
-//                std::cout << "Input the command: " << std::endl;
-//        command = cin.readLine().trimmed().toLower();
-//        if(command!="help" && command!="add" && command != "popular" && command != "unpopular" && command != "probab"){
-//            std::cout << "Incorrect command! Input 'help' to see the list of commands" << std::endl;
+    while(true){
+        std::cout << "Input the command: " << std::endl;
+        command = cin.readLine().trimmed().toLower();
 
-//        }
+        if(command!="help" && command!="add" && command != "popular" && command != "unpopular" && command != "probab"){
+            std::cout << "Incorrect command! Input 'help' to see the list of commands" << std::endl;
+        }
 
-//        if(command=="help"){
-//            helpCout();
-//     }
+        if(command=="help"){
+            helpCout();
+        }
 
-//        if(command=="add"){
-//           std::cout<<"enter your path to the file: "<<std::endl;
-//           QString pathToFile;
-//           pathToFile=cin.readLine().trimmed().toInt();
-//           //textRead(pathToFile);
+        if(command=="add"){
+            std::cout<<"enter your path to the file: "<<std::endl;
+            QString pathToFile;
+            pathToFile=cin.readLine();
+            textRead(pathToFile);
+        }
 
-//       }
-//    }
-    //changesCheck();
+        if(command=="popular"){
+            frequency("popular");
+        }
+
+        if(command=="unpopular"){
+            frequency("unpopular");
+        }
+
+        if(command=="probab"){
+            probability();
+        }
+
+    }
 
 }
