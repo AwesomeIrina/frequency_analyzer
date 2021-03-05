@@ -141,6 +141,42 @@ void symbol_analyzer::helpCout(){
     std::cout << "probab - to see five the probability of your symbol" << std::endl;
 }
 
+void symbol_analyzer::commands(QString command)
+{
+    QTextStream cout(stdout), cin(stdin);
+
+    if(command!="help" && command!="add" && command != "popular" && command != "unpopular" && command != "probab"){
+        std::cout << "Incorrect command! Input 'help' to see the list of commands" << std::endl;
+    }
+
+    if(command=="help"){
+        helpCout();
+    }
+
+    if(command=="add"){
+        std::cout<<"enter your path to the file: "<<std::endl;
+        QString pathToFile;
+        pathToFile=cin.readLine();
+        textRead(pathToFile);
+        std::cout<<"All symbols:"<<std::endl;
+        for(auto it = symbNum.begin(); it != symbNum.end(); it++){
+            cout<<it->first+"->"<<it->second<<endl;
+        }
+    }
+
+    if(command=="popular"){
+        frequency("popular");
+    }
+
+    if(command=="unpopular"){
+        frequency("unpopular");
+    }
+
+    if(command=="probab"){
+        probability();
+    }
+}
+
 void symbol_analyzer::console()
 {
     SetConsoleCP(1251);
@@ -150,38 +186,7 @@ void symbol_analyzer::console()
     while(true){
         std::cout << "Input the command: " << std::endl;
         command = cin.readLine().trimmed().toLower();
-
-        if(command!="help" && command!="add" && command != "popular" && command != "unpopular" && command != "probab"){
-            std::cout << "Incorrect command! Input 'help' to see the list of commands" << std::endl;
-        }
-
-        if(command=="help"){
-            helpCout();
-        }
-
-        if(command=="add"){
-            std::cout<<"enter your path to the file: "<<std::endl;
-            QString pathToFile;
-            pathToFile=cin.readLine();
-            textRead(pathToFile);
-            std::cout<<"All symbols:"<<std::endl;
-            for(auto it = symbNum.begin(); it != symbNum.end(); it++){
-                cout<<it->first+"->"<<it->second<<endl;
-            }
-        }
-
-        if(command=="popular"){
-            frequency("popular");
-        }
-
-        if(command=="unpopular"){
-            frequency("unpopular");
-        }
-
-        if(command=="probab"){
-            probability();
-        }
-
+        commands(command);
     }
 
 }
