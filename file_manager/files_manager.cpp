@@ -1,7 +1,8 @@
 #include "files_manager.h"
-#include <vector>
+#include <thread>
+#include <mutex>
 
-
+std::mutex mtx;
 
 symbol_analyzer::symbol_analyzer()
 {
@@ -79,34 +80,57 @@ void symbol_analyzer::frequency(QString command)
 
 void symbol_analyzer::textRead(QString pathToFile)
 {
-   QTextStream out(stdout);
+   QTextStream cout(stdout);
    QFile file(pathToFile);
    QTextStream in(&file);
    in.setCodec("UTF-8");
    if (!file.open(QIODevice::ReadOnly)) {
      qWarning("Cannot open file for reading");
-   }
-   QString text;
-   //считываем весь текст из файла построчно
-   while (!in.atEnd()) {
-     text += in.readLine().trimmed().toLower() + " ";
-   }
-   file.close();
-   //занесли все символы в мапу
-   for(int i = 0; i<text.size(); i++){
-       symbNum.insert(std::pair<QString, int>(text[i], 0));
-   }
-   //теперь идём по строке и считаем количество символов
-   for(int i = 0; i<text.size(); i++){
-       for(auto it = symbNum.begin(); it!=symbNum.end();it++){
-           if(text[i] == it->first){
-               it->second+=1;
+   }else{
+       QString text;
+       //считываем весь текст из файла построчно
+       while (!in.atEnd()) {
+         text += in.readLine().trimmed().toLower() + " ";
+       }
+       file.close();
+       int split = text.size()/2;
+       std::map<QString, int> saver;
+       std::thread th([&](){
+           for(int i = 0; i<split; i++){
+               saver.insert(std::pair<QString, int>(text[i], 0));
+           }
+           //теперь идём по строке и считаем количество символов
+           for(int i = 0; i<split; i++){
+               for(auto it = saver.begin(); it!=saver.end();it++){
+                   if(text[i] == it->first){
+                       it->second+=1;
+                   }
+               }
+           }
+       });
+       std::thread th1([&,this](){
+           for(int i = split; i<text.size(); i++){
+               symbNum.insert(std::pair<QString, int>(text[i], 0));
+           }
+           //теперь идём по строке и считаем количество символов
+           for(int i = split; i<text.size(); i++){
+               for(auto it = symbNum.begin(); it!=symbNum.end();it++){
+                   if(text[i] == it->first){
+                       it->second+=1;
+                   }
+               }
+           }
+       });
+       th.join();
+       th1.join();
+
+       for(auto it = symbNum.begin(); it != symbNum.end(); it++){
+           for(auto it_saver = saver.begin(); it_saver != saver.end(); it_saver++){
+               if(it->first == it_saver->first){
+                   it->second+=it_saver->second;
+               }
            }
        }
-   }
-   std::cout<<"All symbols:"<<std::endl;
-   for(auto it = symbNum.begin(); it != symbNum.end(); it++){
-       out<<it->first+"->"<<it->second<<endl;
    }
 }
 
@@ -140,6 +164,10 @@ void symbol_analyzer::console()
             QString pathToFile;
             pathToFile=cin.readLine();
             textRead(pathToFile);
+            std::cout<<"All symbols:"<<std::endl;
+            for(auto it = symbNum.begin(); it != symbNum.end(); it++){
+                cout<<it->first+"->"<<it->second<<endl;
+            }
         }
 
         if(command=="popular"){
